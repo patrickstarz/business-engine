@@ -5,33 +5,33 @@ import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
 
+import org.apache.log4j.Logger;
+
 import com.rick.businessengine.persistent.PersistentStorage;
 import com.rick.businessengine.persistent.PersistentStorageFactory;
 import com.rick.businessengine.task.BaseTask;
 
 /**
- * manager of task mainly manage the
- * order,add,remove,persistence,anti-persistence of the task queue
+ * 任务管理器
  * @author Rick
  *
  */
 public class TaskManager {
+	private Logger logger = Logger.getLogger(this.getClass());
+
+	// get one once
+	private Semaphore lock = new Semaphore(0);
 	// here needs a thread safe container
 	private Queue<BaseTask> taskQueue;
 	// storage needs thread safe
 	private PersistentStorage storage;
-	//
-	private Semaphore lock;
 
 	public TaskManager() {
+		lock = new Semaphore(0);
 		taskQueue = new LinkedBlockingQueue<BaseTask>();
 		storage = PersistentStorageFactory.createPersistentStorage();
-		lock = new Semaphore(0);
 	}
 
-	/**
-	 * restore tasks from persistence
-	 */
 	public void restore() {
 		List<?> all = storage.restoreAll();
 		for (Object o : all) {
@@ -39,10 +39,6 @@ public class TaskManager {
 		}
 	}
 
-	/**
-	 * poll a task from task queue 
-	 * @return
-	 */
 	public BaseTask getTask() {
 		BaseTask task = null;
 		try {
@@ -51,15 +47,9 @@ public class TaskManager {
 			e.printStackTrace();
 		}
 		task = (BaseTask) taskQueue.poll();
-		System.out.println("get from taskmanager: " + task.getStoreName());
 		return task;
 	}
 
-	/**
-	 * 
-	 * @param task
-	 * @param isStore
-	 */
 	public void add(BaseTask task, boolean isStore) {
 		if (!taskQueue.contains(task)) {
 			taskQueue.add(task);
@@ -67,7 +57,7 @@ public class TaskManager {
 				storage.store(task.getStoreName(), task);
 			}
 			lock.release();
-			System.out.println("add to taskmanager: " + task.getStoreName());
+			logger.info("++++++++ Add a new task: " + task.getStoreName());
 		}
 	}
 
