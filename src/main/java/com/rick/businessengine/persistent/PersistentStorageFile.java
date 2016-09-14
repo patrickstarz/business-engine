@@ -16,7 +16,7 @@ public class PersistentStorageFile implements PersistentStorage {
 
 	String path = "./store/";
 
-	public PersistentStorageFile() {
+	public void init() {
 		File f = new File(path);
 		if (f.exists() != true) {
 			f.mkdir();
@@ -24,7 +24,7 @@ public class PersistentStorageFile implements PersistentStorage {
 	}
 
 	@Override
-	public boolean store(String key, Object obj) {
+	public void store(String key, Object obj) {
 		File f = new File(path + key);
 		ObjectOutputStream out = null;
 		try {
@@ -45,7 +45,6 @@ public class PersistentStorageFile implements PersistentStorage {
 				}
 			}
 		}
-		return true;
 	}
 
 	@Override
@@ -60,7 +59,7 @@ public class PersistentStorageFile implements PersistentStorage {
 	public List<BaseTask> restoreAll() {
 		List<BaseTask> list = new LinkedList<BaseTask>();
 		File dir = new File(path);
-		if (dir.exists() != true) {
+		if (dir.exists()) {
 			dir.mkdir();
 		} else {
 			File[] files = dir.listFiles();

@@ -10,8 +10,7 @@ import com.rick.businessengine.task.BaseTask;
  *
  */
 public interface PersistentStorage {
-	// return Id
-	public boolean store(String key, Object obj);
+	public void store(String key, Object obj);
 
 	public void remove(String id);
 

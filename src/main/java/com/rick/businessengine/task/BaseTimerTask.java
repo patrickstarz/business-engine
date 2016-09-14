@@ -7,7 +7,12 @@ package com.rick.businessengine.task;
  */
 public abstract class BaseTimerTask extends BaseTask {
 	private static final long serialVersionUID = 1L;
-	protected long delay = 0;  //seconds
+	protected long delay = 0;  //milliseconds
+	
+	@Override
+	public boolean isStore() {
+		return false;   //avoid repeat store on starting engine everytime
+	}
 
 	public long getDelay() {
 		return this.delay;
