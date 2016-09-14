@@ -1,2 +1,2 @@
 # business-engine
-A engine to run service easily.
+A engine to run scheduled task of service easily.
