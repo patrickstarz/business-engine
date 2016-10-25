@@ -3,7 +3,6 @@ package com.rick.businessengine;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.Semaphore;
 
 import org.apache.log4j.Logger;
 
@@ -19,20 +18,17 @@ import com.rick.businessengine.task.BaseTask;
 public class TaskManager {
 	private Logger logger = Logger.getLogger(this.getClass());
 
-	// get one once
-	private Semaphore lock = new Semaphore(0);
 	// here needs a thread safe container
 	private Queue<BaseTask> taskQueue;
 	// storage needs thread safe
 	private PersistentStorage storage;
 
 	public TaskManager() {
-		lock = new Semaphore(0);
 		taskQueue = new LinkedBlockingQueue<BaseTask>();
 		storage = PersistentStorageFactory.createPersistentStorage();
 	}
 
-	public void restore() {
+	public synchronized void restore() {
 		List<?> all = storage.restoreAll();
 		for (Object o : all) {
 			add((BaseTask) o, false);
@@ -40,14 +36,7 @@ public class TaskManager {
 	}
 
 	public BaseTask getTask() {
-		BaseTask task = null;
-		try {
-			lock.acquire();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		task = (BaseTask) taskQueue.poll();
-		return task;
+		return (BaseTask) taskQueue.poll();
 	}
 
 	public void add(BaseTask task, boolean isStore) {
@@ -56,7 +45,6 @@ public class TaskManager {
 			if (isStore) {
 				storage.store(task.getStoreName(), task);
 			}
-			lock.release();
 			logger.info("++++++++ Add a new task: " + task.getStoreName());
 		}
 	}

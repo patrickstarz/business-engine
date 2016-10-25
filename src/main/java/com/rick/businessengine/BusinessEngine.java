@@ -19,9 +19,9 @@ public class BusinessEngine extends Thread {
 	private Logger logger = Logger.getLogger(this.getClass());
 
 	private static BusinessEngine businessEngine;                 // 单例模式
-	private static ScheduledThreadPoolExecutor executor = null;   // 线程池
-	private static TaskManager taskManager = null;            // 任务管理器
-	private static boolean shutdown;
+	private ScheduledThreadPoolExecutor executor = null;          // 线程池
+	private TaskManager taskManager = null;                       // 任务管理器
+	private boolean shutdown;
 
 	private BusinessEngine() {}
 	private BusinessEngine(int poolSize) {
@@ -44,7 +44,7 @@ public class BusinessEngine extends Thread {
 	/**
 	 * 关闭事务引擎
 	 */
-	public static void shutdown(){
+	public void shutdown(){
 		shutdown = true;
 	}
 	
@@ -113,5 +113,6 @@ public class BusinessEngine extends Thread {
 				runTimerTask((BaseTimerTask) task);
 			}
 		}
+		executor.shutdown();
 	}
 }
