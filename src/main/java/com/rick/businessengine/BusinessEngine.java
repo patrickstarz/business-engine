@@ -15,7 +15,7 @@ import com.rick.businessengine.task.BaseTimerTask;
  * @author Rick
  * 
  */
-public class BusinessEngine extends Thread {
+public class BusinessEngine {
 	private Logger logger = Logger.getLogger(this.getClass());
 
 	private static BusinessEngine businessEngine;                 // 单例模式
@@ -53,6 +53,7 @@ public class BusinessEngine extends Thread {
 	 * @param task
 	 */
 	public void addTask(BaseTask task) {
+		System.out.println(taskManager);
 		taskManager.add(task, task.isStore());
 	}
 
@@ -97,14 +98,14 @@ public class BusinessEngine extends Thread {
 		}, task.getDelay(), TimeUnit.MILLISECONDS);
 	}
 
-	@Override
-	public void run() {
+	public void start() {
 		logger.info("bussiness-engine has start successfully...");
 		// restore from manager
 		taskManager.restore();
 
 		while (true) {
 			if(shutdown){break;}
+			System.err.println("0000000000"+taskManager);
 			// get task from manager
 			BaseTask task = null;
 			try {
@@ -113,6 +114,7 @@ public class BusinessEngine extends Thread {
 				logger.error("taskManager.getTask is interuputed unexcepted...", e);
 				break;
 			}
+			System.err.println("111111111111"+task);
 			if (task instanceof BaseOnceTask) {
 				runOnceTask((BaseOnceTask) task);
 			} else if (task instanceof BaseTimerTask) {

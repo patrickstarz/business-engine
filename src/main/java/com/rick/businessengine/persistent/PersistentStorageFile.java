@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.rick.businessengine.task.BaseTask;
@@ -57,9 +57,9 @@ public class PersistentStorageFile implements PersistentStorage {
 
 	@Override
 	public List<BaseTask> restoreAll() {
-		List<BaseTask> list = new LinkedList<BaseTask>();
+		List<BaseTask> list = new ArrayList<BaseTask>();
 		File dir = new File(path);
-		if (dir.exists()) {
+		if (!dir.exists()) {
 			dir.mkdir();
 		} else {
 			File[] files = dir.listFiles();
