@@ -105,7 +105,6 @@ public class BusinessEngine {
 
 		while (true) {
 			if(shutdown){break;}
-			System.err.println("0000000000"+taskManager);
 			// get task from manager
 			BaseTask task = null;
 			try {
@@ -114,7 +113,6 @@ public class BusinessEngine {
 				logger.error("taskManager.getTask is interuputed unexcepted...", e);
 				break;
 			}
-			System.err.println("111111111111"+task);
 			if (task instanceof BaseOnceTask) {
 				runOnceTask((BaseOnceTask) task);
 			} else if (task instanceof BaseTimerTask) {

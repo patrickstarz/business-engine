@@ -7,6 +7,7 @@ public class Start {
 		new Thread(new Runnable() {
 			public void run() {
 				BusinessEngine engine = BusinessEngine.getInstance();
+				System.out.println(engine);
 				engine.start();
 			}
 		}).start();
@@ -18,11 +19,11 @@ public class Start {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		BusinessEngine engine = BusinessEngine.getInstance();
-		engine.addTask(new TipMeOnceTask());
-		engine.addTask(new TipMeEverydayTask());
-		System.out.println(engine);
-		engine.addTask(new TipMe10MinLaterTask());
-		engine.addTask(new TipMe6ClockEverydayTask());
+		//BusinessEngine engine = BusinessEngine.getInstance();
+		//engine.addTask(new TipMeOnceTask());
+		//engine.addTask(new TipMeEverydayTask());
+		//System.out.println(engine);
+		//engine.addTask(new TipMe10MinLaterTask());
+		//engine.addTask(new TipMe6ClockEverydayTask());
 	}
 }
