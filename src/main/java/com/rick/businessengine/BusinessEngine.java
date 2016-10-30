@@ -106,7 +106,13 @@ public class BusinessEngine extends Thread {
 		while (true) {
 			if(shutdown){break;}
 			// get task from manager
-			BaseTask task = (BaseTask) taskManager.getTask();
+			BaseTask task = null;
+			try {
+				task = (BaseTask) taskManager.getTask();
+			} catch (InterruptedException e) {
+				logger.error("taskManager.getTask is interuputed unexcepted...", e);
+				break;
+			}
 			if (task instanceof BaseOnceTask) {
 				runOnceTask((BaseOnceTask) task);
 			} else if (task instanceof BaseTimerTask) {

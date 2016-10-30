@@ -1,7 +1,7 @@
 package com.rick.businessengine;
 
 import java.util.List;
-import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.log4j.Logger;
@@ -19,7 +19,7 @@ public class TaskManager {
 	private Logger logger = Logger.getLogger(this.getClass());
 
 	// here needs a thread safe container
-	private Queue<BaseTask> taskQueue;
+	private BlockingQueue<BaseTask> taskQueue;
 	// storage needs thread safe
 	private PersistentStorage storage;
 
@@ -35,8 +35,8 @@ public class TaskManager {
 		}
 	}
 
-	public BaseTask getTask() {
-		return (BaseTask) taskQueue.poll();
+	public BaseTask getTask() throws InterruptedException {
+		return (BaseTask) taskQueue.take();
 	}
 
 	public void add(BaseTask task, boolean isStore) {
