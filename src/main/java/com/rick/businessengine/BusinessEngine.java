@@ -1,7 +1,8 @@
 package com.rick.businessengine;
 
 import java.util.TimerTask;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
@@ -15,17 +16,17 @@ import com.rick.businessengine.task.BaseTimerTask;
  * @author Rick
  * 
  */
-public class BusinessEngine {
+public class BusinessEngine extends Thread{
 	private Logger logger = Logger.getLogger(this.getClass());
 
 	private static BusinessEngine businessEngine;                 // 单例模式
-	private ScheduledThreadPoolExecutor executor = null;          // 线程池
+	private ScheduledExecutorService executor = null;          // 线程池
 	private TaskManager taskManager = null;                       // 任务管理器
 	private boolean shutdown;
 
 	private BusinessEngine() {}
 	private BusinessEngine(int poolSize) {
-		executor = new ScheduledThreadPoolExecutor(poolSize);
+		executor = Executors.newScheduledThreadPool(poolSize);
 		taskManager = new TaskManager();
 	}
 

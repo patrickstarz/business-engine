@@ -39,7 +39,7 @@ public class TaskManager {
 		return (BaseTask) taskQueue.take();
 	}
 
-	public void add(BaseTask task, boolean isStore) {
+	public synchronized void add(BaseTask task, boolean isStore) {
 		if (!taskQueue.contains(task)) {
 			taskQueue.add(task);
 			if (isStore) {
@@ -49,7 +49,7 @@ public class TaskManager {
 		}
 	}
 
-	public void remove(BaseTask task) {
+	public synchronized void remove(BaseTask task) {
 		storage.remove(task.getStoreName());
 	}
 }
