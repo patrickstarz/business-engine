@@ -5,9 +5,8 @@ import com.rick.businessengine.task.BaseTimerTask;
 
 public class TipMe10MinLaterTask extends BaseTimerTask{
 	
-	@Override
-	public long getDelay() {
-		return 10*60*1000;
+	public TipMe10MinLaterTask() {
+		setDelay(10*60*1000);
 	}
 	
 	@Override

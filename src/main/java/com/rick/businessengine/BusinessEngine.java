@@ -1,15 +1,11 @@
 package com.rick.businessengine;
 
-import java.util.TimerTask;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 
-import com.rick.businessengine.task.BaseOnceTask;
 import com.rick.businessengine.task.BaseTask;
-import com.rick.businessengine.task.BaseTimerTask;
 
 /**
  * 事务引擎
@@ -19,14 +15,13 @@ import com.rick.businessengine.task.BaseTimerTask;
 public class BusinessEngine extends Thread{
 	private Logger logger = Logger.getLogger(this.getClass());
 
-	private static BusinessEngine businessEngine;                 // 单例模式
-	private ScheduledExecutorService executor = null;          // 线程池
-	private TaskManager taskManager = null;                       // 任务管理器
+	private static BusinessEngine businessEngine;                 	// 单例模式
+	private ExecutorService executor = null;          				// 线程池
+	private TaskManager taskManager = null;                       	// 任务管理器
 	private boolean shutdown;
 
-	private BusinessEngine() {}
-	private BusinessEngine(int poolSize) {
-		executor = Executors.newScheduledThreadPool(poolSize);
+	private BusinessEngine() {
+		executor = Executors.newCachedThreadPool();
 		taskManager = new TaskManager();
 	}
 
@@ -37,7 +32,7 @@ public class BusinessEngine extends Thread{
 	 */
 	public static synchronized BusinessEngine getInstance() {
 		if (businessEngine == null) {
-			businessEngine = new BusinessEngine(500);
+			businessEngine = new BusinessEngine();
 		}
 		return businessEngine;
 	}
@@ -54,7 +49,6 @@ public class BusinessEngine extends Thread{
 	 * @param task
 	 */
 	public void addTask(BaseTask task) {
-		System.out.println(taskManager);
 		taskManager.add(task, task.isStore());
 	}
 
@@ -78,7 +72,7 @@ public class BusinessEngine extends Thread{
 	 * 执行一次性任务
 	 * @param task
 	 */
-	public void runOnceTask(final BaseOnceTask task) {
+	public void runOnceTask(final BaseTask task) {
 		// ask thread pool to run a new task
 		executor.execute(new Runnable() {
 			public void run() {
@@ -87,18 +81,7 @@ public class BusinessEngine extends Thread{
 		});
 	}
 
-	/**
-	 * 执行定时任务
-	 * @param task
-	 */
-	public void runTimerTask(final BaseTimerTask task) {
-		executor.schedule(new TimerTask() {
-			public void run() {
-				runTask(task);
-			}
-		}, task.getDelay(), TimeUnit.MILLISECONDS);
-	}
-
+	@Override
 	public void start() {
 		logger.info("bussiness-engine has start successfully...");
 		// restore from manager
@@ -114,11 +97,7 @@ public class BusinessEngine extends Thread{
 				logger.error("taskManager.getTask is interuputed unexcepted...", e);
 				break;
 			}
-			if (task instanceof BaseOnceTask) {
-				runOnceTask((BaseOnceTask) task);
-			} else if (task instanceof BaseTimerTask) {
-				runTimerTask((BaseTimerTask) task);
-			}
+			runOnceTask(task);
 		}
 		executor.shutdown();
 	}

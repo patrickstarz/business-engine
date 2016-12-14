@@ -1,8 +1,7 @@
 package com.rick.businessengine;
 
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.DelayQueue;
 
 import org.apache.log4j.Logger;
 
@@ -19,12 +18,12 @@ public class TaskManager {
 	private Logger logger = Logger.getLogger(this.getClass());
 
 	// here needs a thread safe container
-	private BlockingQueue<BaseTask> taskQueue;
+	private DelayQueue<BaseTask> taskQueue;
 	// storage needs thread safe
 	private PersistentStorage storage;
 
 	public TaskManager() {
-		taskQueue = new LinkedBlockingQueue<BaseTask>();
+		taskQueue = new DelayQueue<BaseTask>();
 		storage = PersistentStorageFactory.createPersistentStorage();
 	}
 
